@@ -56,7 +56,8 @@
             const now = performance.now()
             while (time + TICK <= now) {
                 time += TICK                
-            }            
+            }  
+            view.render(game, ctx)
         }
 
 	</script>
