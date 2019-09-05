@@ -34,6 +34,7 @@ export default class View {
                     ctx.drawImage(spike, s.x - spike.width * 0.5, s.y - spike.height * 0.55)
                 })
                 game.coins.forEach(c => {
+                    if(c.collected) return
                     if (c.x < game.flappy.x - 300 || c.x > game.flappy.x + 2000) return
                     ctx.drawImage(coin, c.x - coin.width * 0.5, c.y - coin.height * 0.5)
                 })

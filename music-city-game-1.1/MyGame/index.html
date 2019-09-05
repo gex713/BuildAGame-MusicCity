@@ -41,7 +41,7 @@
 
 		const TICK = 1000 / 240
 
-		const game = new Game()
+		let game = new Game()
 		const view = new View()
 
 		const ctx = document.getElementById('viewport')
@@ -52,9 +52,11 @@
         
         function loop() {
             requestAnimationFrame(loop)
-
+                        
             const now = performance.now()
             while (time + TICK <= now) {
+                const finished = game.update()
+                if(finished) game = new Game()
                 time += TICK                
             }  
             view.render(game, ctx)
