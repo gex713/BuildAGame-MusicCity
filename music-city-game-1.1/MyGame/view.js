@@ -11,6 +11,8 @@ export default class View {
     constructor() {
         this.bg = Sprite('assets/background')
         this.flappy = Sprite('assets/flappy', 4)
+        this.spike = Sprite('assets/spike')
+        this.coin = Sprite('assets/coin', 10)
     }
 
     render(game, ctx) {
@@ -18,12 +20,23 @@ export default class View {
         const flappy = this.flappy[flappyFrame]
         const flappyX = game.flappy.x - flappy.width * 0.6
         const flappyY = game.flappy.y - flappy.height * 0.5
+        const spike = this.spike[0]
+        const coinFrame = Math.floor(performance.now() / 100) % this.coin.length
+        const coin = this.coin[coinFrame]
 
         ctx.save()
             ctx.drawImage(this.bg[0], 0, 0)
             ctx.save()
                 ctx.translate(250 - game.flappy.x, 0)
                 ctx.drawImage(flappy, flappyX, flappyY)
+                game.spikes.forEach(s => {
+                    if (s.x < game.flappy.x - 300 || s.x > game.flappy.x + 2000) return
+                    ctx.drawImage(spike, s.x - spike.width * 0.5, s.y - spike.height * 0.55)
+                })
+                game.coins.forEach(c => {
+                    if (c.x < game.flappy.x - 300 || c.x > game.flappy.x + 2000) return
+                    ctx.drawImage(coin, c.x - coin.width * 0.5, c.y - coin.height * 0.5)
+                })
             ctx.restore()
         ctx.restore()
     }
