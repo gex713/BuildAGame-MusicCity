@@ -1,6 +1,6 @@
 const START_X = 0
 const START_Y = 540
-const GRID_LEFT = 200
+const GRID_LEFT = 900
 const GRID_TOP = 200
 const GRID_SIZE = 200
 const GRID_COLUMNS = 800
@@ -12,10 +12,12 @@ const GRAVITY = 0.1
 const FLAP_POWER = 10
 const CEILING = 40
 const FLOOR = 2000
+const DEATH_DELAY = 3000
+const COIN_POINTS = 100
 
 class Entity {
     constructor(x, y, size) {
-        Object.assign(this, {x, y, size})
+        Object.assign(this, { x, y, size })
     }
     hits(other) {
         const dx = this.x - other.x
@@ -36,6 +38,7 @@ class Flappy extends Entity {
         const yVel = this.y - this.prevY
         this.prevY = this.y
         this.y += yVel * MOMENTUM + GRAVITY
+        if (this.death > 0) return
 
         this.x += FLY_SPEED
 
@@ -86,14 +89,22 @@ export default class Game {
     update(flapping) {
         this.flappy.update(flapping)
 
-        this.spikes.forEach(s => {
-            if (s.hits(this.flappy)) this.flappy.die()
-        })
-        this.coins.forEach(c => {
-            if(c.hits(this.flappy)) c.collect()
-        })
+        if (this.flappy.death === 0) {
+            this.spikes.forEach(s => {
+                if (s.hits(this.flappy)) this.flappy.die()
+            })
+            this.coins.forEach(c => {
+                if (c.hits(this.flappy)) c.collect()
+            })
+        }
 
         const finished = this.flappy.death > 0
-        return finished
+        const waited = performance.now() > this.flappy.death + DEATH_DELAY
+        return finished && waited
+    }
+    score() {
+        return this.coins.reduce((sum, c) => {
+            return c.collected ? sum + COIN_POINTS : sum
+        }, 0)
     }
 }

@@ -1,3 +1,8 @@
+const SCROLL_SPEED = 0.33
+const WIDTH = 1920
+const SHAKE = 15
+const SHAKE_TIME = 100
+
 function Sprite(path, n = 1) {
     const files = Array(n).fill(true).map((_, n) => `${path}${n}.png`)
     return files.map(f => {
@@ -23,10 +28,18 @@ export default class View {
         const spike = this.spike[0]
         const coinFrame = Math.floor(performance.now() / 100) % this.coin.length
         const coin = this.coin[coinFrame]
+        const score = game.score()
+        const scroll = (game.flappy.x * SCROLL_SPEED) % WIDTH
+        const justDied = game.flappy.death > 0 && performance.now() < game.flappy.death + SHAKE_TIME
 
         ctx.save()
-            ctx.drawImage(this.bg[0], 0, 0)
+            if (justDied) {
+                ctx.translate(Math.random() * SHAKE, Math.random() * SHAKE)
+            }
+            ctx.drawImage(this.bg[0], -scroll, 0)
+            ctx.drawImage(this.bg[0], -scroll + WIDTH, 0)
             ctx.save()
+                
                 ctx.translate(250 - game.flappy.x, 0)
                 ctx.drawImage(flappy, flappyX, flappyY)
                 game.spikes.forEach(s => {
@@ -39,6 +52,10 @@ export default class View {
                     ctx.drawImage(coin, c.x - coin.width * 0.5, c.y - coin.height * 0.5)
                 })
             ctx.restore()
+            ctx.fillStyle = '#f99'
+            ctx.font = '92px bold verdana'
+            ctx.textBaseLine = 'top'
+            ctx.fillText(score, 20, 100)
         ctx.restore()
     }
 }
