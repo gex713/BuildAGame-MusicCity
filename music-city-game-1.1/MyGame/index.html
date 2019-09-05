@@ -45,7 +45,10 @@
 		const view = new View()
 
 		const ctx = document.getElementById('viewport')
-            .getContext('2d', { alpha: false })
+                            .getContext('2d', { alpha: false })
+        const input = []
+
+        document.addEventListener('keydown', () => input.push(true))
 
         let time = performance.now()
         requestAnimationFrame(loop)
@@ -55,7 +58,8 @@
                         
             const now = performance.now()
             while (time + TICK <= now) {
-                const finished = game.update()
+                const flapping = input.shift()
+                const finished = game.update(flapping)
                 if(finished) game = new Game()
                 time += TICK                
             }  

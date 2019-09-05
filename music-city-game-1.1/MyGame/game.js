@@ -7,6 +7,11 @@ const GRID_COLUMNS = 800
 const GRID_ROWS = 5
 const GRID_DENSITY = 0.06
 const FLY_SPEED = 3
+const MOMENTUM = 0.99
+const GRAVITY = 0.1
+const FLAP_POWER = 10
+const CEILING = 40
+const FLOOR = 2000
 
 class Entity {
     constructor(x, y, size) {
@@ -25,9 +30,18 @@ class Flappy extends Entity {
     constructor(x, y) {
         super(x, y, 55)
         this.death = 0
+        this.prevY = this.y
     }
-    update() {
+    update(flapping) {
+        const yVel = this.y - this.prevY
+        this.prevY = this.y
+        this.y += yVel * MOMENTUM + GRAVITY
+
         this.x += FLY_SPEED
+
+        if (flapping) this.y -= FLAP_POWER
+        if (this.y < CEILING) this.y = CEILING
+        if (this.y > FLOOR) this.die()
     }
     die() {
         this.death = performance.now()
@@ -69,9 +83,8 @@ export default class Game {
             }
         }
     }
-
-    update() {
-        this.flappy.update()
+    update(flapping) {
+        this.flappy.update(flapping)
 
         this.spikes.forEach(s => {
             if (s.hits(this.flappy)) this.flappy.die()
