@@ -33,6 +33,7 @@
 <body>
 	<div id='container'>
 		<canvas id='viewport' width='1920' height='1080'></canvas>
+        <audio id='music' src='assets/music.mp3' />
 	</div>
 	<script type='module'>
 
@@ -47,6 +48,7 @@
 		const ctx = document.getElementById('viewport')
                             .getContext('2d', { alpha: false })
         const input = []
+        const music = document.getElementById('music')
 
         document.addEventListener('keydown', () => input.push(true))
 
@@ -64,6 +66,13 @@
                 time += TICK                
             }  
             view.render(game, ctx)
+
+            if (game.started && game.flappy.death === 0) {
+                music.play()
+            } else {
+                music.pause()
+                music.currentTime = 0.5
+            }
         }
 
 	</script>

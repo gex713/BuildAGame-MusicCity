@@ -72,6 +72,7 @@ export default class Game {
         this.flappy = new Flappy(START_X, START_Y)
         this.spikes = []
         this.coins = []
+        this.started = false
 
         for (let c = 0; c < GRID_COLUMNS; c++) {
             for (let r = 0; r < GRID_ROWS; r++) {
@@ -87,6 +88,11 @@ export default class Game {
         }
     }
     update(flapping) {
+        if (!this.started) {
+            if (!flapping) return
+            this.started = true
+        }
+
         this.flappy.update(flapping)
 
         if (this.flappy.death === 0) {
